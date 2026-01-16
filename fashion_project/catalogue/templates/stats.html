@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard FashionBook</title>
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fc; }
+        
+        /* En-tête */
+        .header { background-color: #2e59d9; color: white; padding: 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .subtitle { font-size: 14px; opacity: 0.8; }
+
+        /* Conteneur principal */
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+
+        /* Carte KPI (Chiffre clé) */
+        .kpi-card {
+            background: white; padding: 20px; border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;
+            margin-bottom: 30px; border-left: 5px solid #4e73df;
+        }
+        .kpi-number { font-size: 36px; font-weight: bold; color: #333; }
+
+        /* Grille des graphiques */
+        .charts-grid { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; }
+        
+        .chart-card {
+            background: white; padding: 20px; border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            flex: 1; min-width: 400px; text-align: center;
+        }
+        
+        img { max-width: 100%; height: auto; }
+
+        /* Bouton Retour */
+        .btn-back {
+            display: inline-block; margin-top: 40px; padding: 10px 25px;
+            background-color: #858796; color: white; text-decoration: none;
+            border-radius: 5px; transition: background 0.3s;
+        }
+        .btn-back:hover { background-color: #5a5c69; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>FashionBook Analytics</h1>
+        <div class="subtitle">Tableau de bord administrateur</div>
+    </div>
+
+    <div class="container">
+        <div class="kpi-card">
+            <div>Total Références Catalogue</div>
+            <div class="kpi-number">{{ total_garments }}</div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <img src="data:image/png;base64,{{ graph_stock }}" alt="Graphique Stocks">
+            </div>
+            <div class="chart-card">
+                <img src="data:image/png;base64,{{ graph_eco }}" alt="Graphique Écologie">
+            </div>
+        </div>
+
+        <center>
+            <a href="/admin/" class="btn-back">← Retour à l'administration</a>
+        </center>
+    </div>
+
+</body>
+</html>
