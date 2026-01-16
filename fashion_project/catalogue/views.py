@@ -1,12 +1,25 @@
 from django.shortcuts import render
 from django.db.models import Sum, Count
-from .models import Garment
+
+# Imports pour l'API (Django Rest Framework)
+from rest_framework import viewsets, filters
+from rest_framework.pagination import PageNumberPagination
+
+# Imports pour les Graphiques (Matplotlib)
 import matplotlib.pyplot as plt
 import io
 import urllib, base64
 
+# Imports de tes propres fichiers (Modèles et Serializers)
+from .models import Garment, Designer, Trend
+from .serializers import GarmentSerializer, DesignerSerializer, TrendSerializer
+
+# ==========================================
+# PARTIE 1 : STATISTIQUES (Back-Office)
+# ==========================================
+
 def get_graph():
-    """Fonction utilitaire pour convertir le graphique en image"""
+    """Fonction utilitaire pour convertir le graphique Matplotlib en image affichable"""
     buffer = io.BytesIO()
     plt.savefig(buffer, format='png')
     buffer.seek(0)
@@ -51,6 +64,37 @@ def stats_view(request):
     context = {
         'graph_stock': graph_stock,
         'graph_eco': graph_eco,
-        'total_garments': Garment.objects.count() # Petit bonus : le chiffre total
+        'total_garments': Garment.objects.count()
     }
     return render(request, 'stats.html', context)
+
+
+# ==========================================
+# PARTIE 2 : API (Pour React)
+# ==========================================
+
+# Configuration de la pagination (12 articles par page pour le catalogue)
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 12
+    page_size_query_param = 'page_size'
+
+# API pour les Vêtements
+class GarmentViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Garment.objects.all().order_by('-id') # Les plus récents en premier
+    serializer_class = GarmentSerializer
+    pagination_class = StandardResultsSetPagination
+    
+    # Activation des filtres (Recherche et Tri)
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'description', 'designer__name'] # Chercher par nom ou marque
+    ordering_fields = ['price', 'release_date']
+
+# API pour les Designers (Marques)
+class DesignerViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Designer.objects.all()
+    serializer_class = DesignerSerializer
+
+# API pour les Tendances
+class TrendViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Trend.objects.all()
+    serializer_class = TrendSerializer
